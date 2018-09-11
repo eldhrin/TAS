@@ -2,12 +2,14 @@ package tas;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.*;
 
-import java.io.FileOutputStream;
+import java.util.*;
+import java.io.*;
+import javax.swing.*;
+
 
 /**
  *
@@ -18,24 +20,40 @@ public class TAS {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
        
-        Workbook workbook = new HSSFWorkbook();
-        
-        Sheet sheet = workbook.createSheet();
-        Row row = sheet.createRow(1);
-        Cell cell = row.createCell(4);
-        
-        cell.setCellValue("YO");
-        
-        try {
-            FileOutputStream output = new FileOutputStream("Test.xls");
-            workbook.write(output);
-            output.close();
-        } catch (Exception e){
-            e.printStackTrace();
+        //user chooses file
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+        //approve file chosen
+        if(returnValue == JFileChooser.APPROVE_OPTION){
+            
+            //TRY CATCH
+            //get selected file
+            try {
+                XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(fileChooser.getSelectedFile()));
+                Sheet sheet = wb.getSheetAt(0);
+                
+                //create new file from template file, modifying file goes here
+                FileOutputStream fileOut = new FileOutputStream("NEW_TAS.xlsx");
+                wb.write(fileOut);
+                fileOut.close();
+                
+                
+                //ITERATE THROUGH FILE
+//                for(Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();){
+//                    Row row = rit.next();
+//                    
+//                    for(Iterator<Cell> cit = row.cellIterator(); cit.hasNext();){
+//                        Cell cell = cit.next();
+//                        System.out.println(cell + "\t");
+//                    }
+//                    System.out.println();
+//                }
+            } catch (FileNotFoundException ex) {
+               ex.printStackTrace();           
+            }
+            
         }
-        
     }
-    
 }
