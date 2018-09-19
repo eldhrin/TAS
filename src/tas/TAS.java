@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -12,16 +13,19 @@ import org.apache.poi.xssf.usermodel.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
+import com.mongodb.util.JSON;
 
 import org.json.*;
 
 import java.util.*;
 import java.io.*;
+import java.net.UnknownHostException;
 import javax.swing.*;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 
 /**
@@ -30,20 +34,24 @@ import org.bson.Document;
  */
 public class TAS {
     
+    //if DoubleCell == blank, d = 0.0
     public static Double nullDouble(Cell c, Double d){
         if(c == null){
             d = 0.0;
         }
+        //if DoubleCell != blank, d = value of cell
         else{
             d = Double.parseDouble(c.toString());
         }
         return d;
     }
     
+    //if StringCell == blank, s = ""
     public static String nullString(Cell c, String s){
         if(c == null){
             s = "";
         }
+        //if StringCell != blank, s = value of cell
         else{
             s = c.toString();
         }
@@ -57,9 +65,12 @@ public class TAS {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, JSONException {
-       
+        
+        
+        //connect to local mongodb
         Mongo mongo = new Mongo("localhost", 27017);
         DB db = mongo.getDB("TAS");
+        //find collection TAS
         DBCollection collection = db.getCollection("TAS");
 //        //user chooses file
         JFileChooser fileChooser = new JFileChooser();
@@ -72,12 +83,13 @@ public class TAS {
             //get selected file
             try {
                 
-                
+                //read seleted excel file
                 XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(fileChooser.getSelectedFile()));
                 
+                //get name, school, date
                 Cell cID = wb.getSheetAt(0).getRow(11).getCell(1, xc.RETURN_BLANK_AS_NULL);
                 String cid = new String();
-                        cid = nullString(cID,cid);
+                        cid = nullString(cID, cid);
                 Cell cDate = wb.getSheetAt(0).getRow(8).getCell(1, xc.RETURN_BLANK_AS_NULL);
                 String cdate = new String();
                         cdate = nullString(cDate, cdate);
@@ -88,13 +100,16 @@ public class TAS {
                 String cschool = new String();
                         cschool = nullString(cSchool, cschool);
                 
+                        
+                        //TEACHING
                 Cell cCore = wb.getSheetAt(0).getRow(16).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double ccore = 0.0;
                         ccore = nullDouble(cCore, ccore);
                 Cell cSupport = wb.getSheetAt(0).getRow(17).getCell(2, xc.RETURN_BLANK_AS_NULL);
-                Double csupport = 0.0;
-                        csupport = nullDouble(cSupport, csupport);
+                Double ctsupport = 0.0;
+                        ctsupport = nullDouble(cSupport, ctsupport);
                 
+                        //RESEARCH
                 Cell cCouncils = wb.getSheetAt(0).getRow(20).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double ccouncils = 0.0;
                         ccouncils = nullDouble(cCouncils, ccouncils);
@@ -130,11 +145,12 @@ public class TAS {
                         cinternal_research = nullDouble(cInternal_research, cinternal_research);
                 Cell cSupport_intext= wb.getSheetAt(0).getRow(31).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double csupport_intext = 0.0;
-                        csupport = nullDouble(cSupport_intext, csupport);
+                        csupport_intext = nullDouble(cSupport_intext, csupport_intext);
                 Cell cSupport_SFC = wb.getSheetAt(0).getRow(32).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double csupport_sfc = 0.0;
-                       csupport = nullDouble(cSupport_SFC, csupport);
+                       csupport_intext = nullDouble(cSupport_SFC, csupport_intext);
                 
+                       //SCHOLARSHIP
                 Cell cTeaching = wb.getSheetAt(0).getRow(34).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double cteaching = 0.0;
                     cteaching = nullDouble(cTeaching, cteaching);
@@ -145,6 +161,7 @@ public class TAS {
                 Double cphd = 0.0;
                         cphd = nullDouble(cPhD, cphd);
                 
+                        //OTHER
                 Cell coOther = wb.getSheetAt(0).getRow(38).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double coother = 0.0;
                         coother = nullDouble(coOther, coother);
@@ -152,29 +169,37 @@ public class TAS {
                Double cosupport = 0.0;
                         cosupport = nullDouble(coSupport, cosupport);
                 
+                        //MANAGEMENT
                 Cell cMgmt = wb.getSheetAt(0).getRow(41).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double cmgmt = 0.0;
                         cmgmt = nullDouble(cMgmt, cmgmt);
                 
+                        //TOTAL
                 Cell cTotal = wb.getSheetAt(0).getRow(43).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double ctotal = 0.0;
                       //  ctotal = nullDouble(cTotal, ctotal);
                 
+                      //HOLIDAYS
                 Cell cHols = wb.getSheetAt(0).getRow(45).getCell(2, xc.RETURN_BLANK_AS_NULL);
                 Double chols = 0.0;
                         chols = nullDouble(cHols, chols);
                 
+                        //MongoDB database object
                 BasicDBObject document = new BasicDBObject();
-                document.put("_id", cid);
+                document.put("uID", cid);
                 document.put("date", cdate);
                 document.put("name", cname);
                 document.put("school", cschool);
                 
+                //nested TEACHING document
                 BasicDBObject documentTeach = new BasicDBObject();
                 documentTeach.put("core", ccore);
-                documentTeach.put("support", csupport);
+                documentTeach.put("support", ctsupport);
                 document.put("Teaching", documentTeach);
+                
+                //nested RESEARCH document
                 BasicDBObject documentResearch = new BasicDBObject();
+                documentResearch.put("council", ccouncils);
                 documentResearch.put("UK_govt", cuk_govt);
                 documentResearch.put("EU", ceu);
                 documentResearch.put("UK_charity", cuk_charity);
@@ -189,44 +214,43 @@ public class TAS {
                 documentResearch.put("support_SFC", csupport_sfc);
                 document.put("Research", documentResearch);
                 
+                //nested SCHOLARSHIP document
                 BasicDBObject documentSchol = new BasicDBObject();
                 documentSchol.put("teaching", cteaching);
                 documentSchol.put("research", cresearch);
                 documentSchol.put("PhD", cphd);
                 document.put("Scholarship", documentSchol);
                 
+                //nested OTHER document
                 BasicDBObject documentOther = new BasicDBObject();
-               documentOther.put("Other", coother);
-               documentOther.put("Osupport", cosupport);
+                documentOther.put("Other", coother);
+                documentOther.put("Osupport", cosupport);
                 document.put("Other", documentOther);
                 
-               document.put("Mgmt", cmgmt);
+                //add all to same mongodb document
+                document.put("Mgmt", cmgmt);
                 document.put("Total", ctotal);
                 document.put("Hols", chols);
                
-               
-               collection.insert(document);
-                System.out.println(document);
-               
-               DBCollection exists = db.getCollection(cid);
-               
-                Set<String> coll = db.getCollectionNames();
-
-                    BasicDBObject query = new BasicDBObject("_id", cid);
-                            DBCursor cursor = collection.find();
-                            while(cursor.hasNext()){
-                                System.out.println(cursor.next());
-
-                                }
-                            }
+                
+                //cursor
+                //search mongodb TAS for document == cid
+                //if doesn't exist, create
+                //if does exist, update
+                //collection.insert(document);
+                
+                BasicDBObject query = new BasicDBObject("uID", cid);
+                
+                
+                
+                }
+            
                 catch (FileNotFoundException ex) {
                     ex.printStackTrace(); 
                 }
-                      
-          
+        
+        
+            }
         }
-        
-        
-    }
     
 }
