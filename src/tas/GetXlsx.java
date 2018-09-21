@@ -1,11 +1,12 @@
 // Adam Lyons 20/09/2018
-// This class gets an Xlsx (excel) document chosen by the user
+//This class gets an Xlsx (excel) document chosen by the user
 //which is then added to a local mongoDB
 //if the document already exists (determined by the person's login ID)
 //the database updates that document
 //if the document does not already exist, the document is created
 
 //if there is a DB error, the database is offline and needs reconnected
+
 package tas;
 
 //import files
@@ -165,9 +166,7 @@ public class GetXlsx {
                         cmgmt = nullDouble(cMgmt, cmgmt);
                 
                 //TOTAL
-                Cell cTotal = wb.getSheetAt(0).getRow(43).getCell(2, xc.RETURN_BLANK_AS_NULL);
-                Double ctotal = 0.0;
-                      //  ctotal = nullDouble(cTotal, ctotal);
+                Double ctotal = ccore + ctsupport + ccouncils + cuk_govt + ceu + cuk_charity + cuk_industry + cktp_projects + cother + csfc_innovation + csfc_rd + cpgr_supervision + cinternal_research + csupport_intext + csupport_sfc + cteaching + cresearch + cphd + coother + cosupport;
                 
                 //HOLIDAYS
                 Cell cHols = wb.getSheetAt(0).getRow(45).getCell(2, xc.RETURN_BLANK_AS_NULL);
@@ -229,11 +228,11 @@ public class GetXlsx {
                 DBCursor cursor = collection.find(query);
                 if(cursor.hasNext()){
                     collection.update(cursor.next(), document);
-                    System.out.println("Updated document " + cname);
+                    System.out.println("Updated document " + cname + " with ID " + cid);
                 }
                 else{
                     collection.insert(document);
-                    System.out.println("Added document " + cname);
+                    System.out.println("Added document " + cname + " with ID " + cid);
                 }
                 //close the database
                 mongo.close();
