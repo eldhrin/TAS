@@ -1,6 +1,7 @@
 package tas;
 
 import java.io.IOException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.*;
 
 
@@ -16,9 +17,9 @@ public class TAS {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InvalidFormatException {
         
-        //GetXlsx.getXlsx();
+        GetXlsx.getXlsx();
         WriteXlsx.writeXlsx();
     }
     

@@ -15,10 +15,13 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.Mongo;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JFileChooser;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -35,7 +38,8 @@ public class GetXlsx {
         }
         //if DoubleCell != blank, d = value of cell
         else{
-            d = Double.parseDouble(c.toString());
+            String con = c.toString();
+            d = Double.parseDouble(con);
         }
         return d;
     }
@@ -56,17 +60,25 @@ public class GetXlsx {
     //converts blank cell to null
     private static Row.MissingCellPolicy xc;
     
-    public static void getXlsx() throws IOException{
+    public static void getXlsx() throws IOException, InvalidFormatException{
         //connect to local mongodb
         Mongo mongo = new Mongo("localhost", 27017);
         DB db = mongo.getDB("TAS");
         //find collection TAS
         DBCollection collection = db.getCollection("TAS");
         //user chooses file
-        JFileChooser fileChooser = new JFileChooser();
-        int returnValue = fileChooser.showOpenDialog(null);
-        //approve file chosen
-        if(returnValue == JFileChooser.APPROVE_OPTION){
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Choose a directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        
+        if(chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+        
+        FileFilter filter = new ExcelFileFilter();
+        File directory = chooser.getSelectedFile();
+        File[] files = directory.listFiles(filter);
+        for(File file : files){
             
             
             //TRY CATCH
@@ -74,7 +86,7 @@ public class GetXlsx {
             try {
                 
                 //read seleted excel file
-                XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(fileChooser.getSelectedFile()));
+                XSSFWorkbook wb = new XSSFWorkbook(file);
                 
                 
                 //GET VARIABLES FROM THE SPREADSHEET AND CONVERT TO STRING/DOUBLE
@@ -235,7 +247,6 @@ public class GetXlsx {
                     System.out.println("Added document " + cname + " with ID " + cid);
                 }
                 //close the database
-                mongo.close();
                 
                 }
             
@@ -244,6 +255,8 @@ public class GetXlsx {
                 }
         
         
-            }//end of file approver try-catch
-        }//end of getXlsx()
+            }//end of directory loop
+        mongo.close();
+        }//end of directory chooser
+    }//end of getXlsx()
 }// end of main class
