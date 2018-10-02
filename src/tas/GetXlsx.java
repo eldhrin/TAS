@@ -17,7 +17,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.Mongo;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JFileChooser;
