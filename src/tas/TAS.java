@@ -19,8 +19,9 @@ public class TAS {
      */
     public static void main(String[] args) throws IOException, InvalidFormatException {
         
-        GetXlsx.getXlsx();
-        WriteXlsx.writeXlsx();
+        //GetXlsx.getXlsx();
+        //WriteXlsx.writeXlsx();
+        GenerateXlsx.generateXlsx();
     }
     
 }

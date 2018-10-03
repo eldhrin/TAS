@@ -1,6 +1,7 @@
 // Adam Lyons 20/09/2018
-//This class gets an Xlsx (excel) document chosen by the user
-//which is then added to a local mongoDB
+//This class gets a directory chosen by the user which will loop through 
+//and read all .xls or .xlsx files (legacy and modern excel files)
+//This is read and then added to a local mongoDB
 //if the document already exists (determined by the person's login ID)
 //the database updates that document
 //if the document does not already exist, the document is created
@@ -65,7 +66,7 @@ public class GetXlsx {
         DB db = mongo.getDB("TAS");
         //find collection TAS
         DBCollection collection = db.getCollection("TAS");
-        //user chooses file
+        //user chooses directory containing all users tas excel sheets
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File("."));
         chooser.setDialogTitle("Choose a directory");
@@ -77,14 +78,14 @@ public class GetXlsx {
         FileFilter filter = new ExcelFileFilter();
         File directory = chooser.getSelectedFile();
         File[] files = directory.listFiles(filter);
+        //for every file in the chosen directory
         for(File file : files){
             
             
             //TRY CATCH
-            //get selected file
             try {
                 
-                //read seleted excel file
+                //read excel file
                 XSSFWorkbook wb = new XSSFWorkbook(file);
                 
                 
