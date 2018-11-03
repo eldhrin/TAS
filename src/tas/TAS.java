@@ -1,6 +1,7 @@
 package tas;
 
 import java.io.IOException;
+import java.text.ParseException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.*;
 
@@ -17,11 +18,12 @@ public class TAS {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args) throws IOException, InvalidFormatException, ParseException {
         
         //GetXlsx.getXlsx();
         //WriteXlsx.writeXlsx();
-        GenerateXlsx.generateXlsx();
+        //GenerateXlsx.generateXlsx();
+        GetHols.getHols();
     }
     
 }
