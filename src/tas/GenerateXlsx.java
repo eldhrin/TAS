@@ -12,17 +12,70 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import static tas.GetXlsx.nullDouble;
-import static tas.GetXlsx.nullString;
+import org.joda.time.LocalDate;
+import static tas.WriteXlsx.getDate;
 
 /**
  *
  * @author fl8328
  */
 public class GenerateXlsx {
+   static int period;
+    
+    public static int getDate(){
+        //collection dates
+        //1/10 - 31/01
+        //1/2-31/5
+        //1/6 - 30/9
+        Date sem = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(sem);
+         if(cal.get(Calendar.MONTH) >= 9){
+            period = 1;
+        }
+        else if(cal.get(Calendar.MONTH) == 0){
+            period = 1;
+        }
+        
+        
+        //SECOND SEMESTER CUT OFF DATES
+        else if(cal.get(Calendar.MONTH) == 1){
+            period = 2;
+        }
+        else if(cal.get(Calendar.MONTH) == 2){
+            period = 2;
+        }
+        else if(cal.get(Calendar.MONTH) == 3){
+            period = 2;
+        }
+        if(cal.get(Calendar.MONTH) == 4){
+            period = 2;
+        }
+        
+        
+        //THIRD SEMESTER CUT OFF DATES
+        if(cal.get(Calendar.MONTH) == 5){
+            period = 3;
+        }
+        if(cal.get(Calendar.MONTH) == 6){
+            period = 3;
+        }
+        if(cal.get(Calendar.MONTH) == 7){
+            period = 3;
+        }
+        if(cal.get(Calendar.MONTH) == 8){
+            period = 3;
+        }
+        //return period
+        return period;
+        
+    }
+  
   
     
     public static void generateXlsx() throws IOException, InvalidFormatException{
@@ -50,16 +103,22 @@ public class GenerateXlsx {
                 //get name, school, date
                 
                 Cell cDate = wb.getSheetAt(0).getRow(8).getCell(1);
-                String cdate = o.get("date").toString();
-                cDate.setCellValue(cdate);
+                int  d = getDate();
+                    String time = "";
+                    if(d == 1){
+                        time = "1st of October < YEAR > to 31st of Januaray < YEAR + 1 >";
+                    }
+                    else if (d == 2){
+                        time = "1st of Feburary <YEAR> to 31st of May <YEAR>";
+                    }
+                    else{
+                        time = "1st of June <YEAR> to 30th September <YEAR>";
+                    }
+                cDate.setCellValue(time);
                 
                 Cell cName = wb.getSheetAt(0).getRow(10).getCell(1);
                 String cname = o.get("name").toString();
                 cName.setCellValue(cname);
-                
-                Cell cID = wb.getSheetAt(0).getRow(11).getCell(1);
-                String cid = o.get("uID").toString();
-                cID.setCellValue(cid);
                 
                 Cell cSchool = wb.getSheetAt(0).getRow(12).getCell(1);
                 String cschool = o.get("school").toString();
@@ -159,9 +218,7 @@ public class GenerateXlsx {
                 Cell cTotal = wb.getSheetAt(0).getRow(43).getCell(2);
                 cTotal.setCellValue(ctotal);
                 //HOLIDAYS
-                Cell cHols = wb.getSheetAt(0).getRow(45).getCell(2);
-                Double hols = Double.parseDouble(o.get("Hols").toString());
-                cHols.setCellValue(hols);
+                
                 
                 wb.write(fileOut);
         }
