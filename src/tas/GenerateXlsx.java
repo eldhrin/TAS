@@ -44,7 +44,7 @@ public class GenerateXlsx {
         
         
         //SECOND SEMESTER CUT OFF DATES
-        else if(cal.get(Calendar.MONTH) == 1){
+        else if(cal.get(Calendar.MONTH) >= 1){
             period = 2;
         }
         else if(cal.get(Calendar.MONTH) == 2){
@@ -105,14 +105,17 @@ public class GenerateXlsx {
                 Cell cDate = wb.getSheetAt(0).getRow(8).getCell(1);
                 int  d = getDate();
                     String time = "";
+                    Date y = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(y);
                     if(d == 1){
-                        time = "1st of October < YEAR > to 31st of Januaray < YEAR + 1 >";
+                        time = "1st of October " + cal.get(Calendar.YEAR) + " to 31st of Januaray " + cal.get(Calendar.YEAR)+1;
                     }
                     else if (d == 2){
-                        time = "1st of Feburary <YEAR> to 31st of May <YEAR>";
+                        time = "1st of October " + cal.get(Calendar.YEAR) + " to 31st of Januaray " + cal.get(Calendar.YEAR);
                     }
                     else{
-                        time = "1st of June <YEAR> to 30th September <YEAR>";
+                        time = "1st of October " + cal.get(Calendar.YEAR) + " to 31st of Januaray " + cal.get(Calendar.YEAR);
                     }
                 cDate.setCellValue(time);
                 
@@ -217,7 +220,24 @@ public class GenerateXlsx {
                 Double ctotal = core + support + councils + UK_govt + EU + UK_charity + UK_industry + KTP_projects + other + SFC_innovation + SFC_RD + PGR_supervision + internal_research + support_intext + support_SFC + teaching + research + PhD + cother + cosupport + mgmt;
                 Cell cTotal = wb.getSheetAt(0).getRow(43).getCell(2);
                 cTotal.setCellValue(ctotal);
+                
+                Cell cHols = wb.getSheetAt(0).getRow(45).getCell(2);   
+
                 //HOLIDAYS
+                int h = getDate();
+                if(h == 1){               
+                    Double hols = Double.parseDouble(o.get("sem1").toString());
+                    cHols.setCellValue(hols);
+                }
+                else if(h == 2){          
+                    Double hols = Double.parseDouble(o.get("sem2").toString());
+                    cHols.setCellValue(hols);
+                }
+                else{              
+                    Double hols = Double.parseDouble(o.get("sem3").toString());
+                    cHols.setCellValue(hols);
+                }
+                
                 
                 
                 wb.write(fileOut);
