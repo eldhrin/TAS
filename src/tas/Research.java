@@ -26,7 +26,7 @@ public class Research {
     
     public static float nullFloat(Cell c, float fl){
         if(c == null){
-            fl = 0.0f;
+            fl = 0.00000f;
         }
         //if DoubleCell != blank, d = value of cell
         else{
@@ -85,12 +85,14 @@ public class Research {
                     coinv = Null.nullString(cCoinv, coinv);
                     String[] coin = coinv.split(",");
                     String coinID = coin[0];
+                    coinID = coinID.toUpperCase();
                     
                     Cell cCoinv2 = wb.getSheetAt(0).getRow(i).getCell(11, xc.CREATE_NULL_AS_BLANK);
                     String coinv2 = new String();
                     coinv2 = Null.nullString(cCoinv2, coinv2);
                     String[] coin2 = coinv2.split(",");
                     String coinID2 = coin2[0];
+                    coinID2 = coinID2.toUpperCase();
                     
                     BasicDBObject match_id = new BasicDBObject("uID", projLead);
                     DBCursor matchCursor = collection.find(match_id);
@@ -100,14 +102,6 @@ public class Research {
                     
                     BasicDBObject match_co2 = new BasicDBObject("uID", coinID2);
                     DBCursor matchCo2 = collection.find(match_co2);
-                    
-                    if(matchCursor.hasNext() || matchCo.hasNext() || matchCo2.hasNext()){
-                        System.out.println("MATCH");
-                        document.put("match", "yes");
-//                        System.out.println(matchCursor.next());
-//                        System.out.println(matchCo.next());
-//                        System.out.println(matchCo2.next());
-                    
                     
                     Cell cprojectID = wb.getSheetAt(0).getRow(i).getCell(1, xc.CREATE_NULL_AS_BLANK);
                     String projectID = new String();
@@ -180,41 +174,63 @@ public class Research {
                     }
                     
                     Cell cfte = wb.getSheetAt(0).getRow(i).getCell(8, xc.CREATE_NULL_AS_BLANK);
-                    Float fte = 0.0f;
+                    Float fte = 0.00000f;
                     String ft = new String();
                     fte = nullFloat(cfte, fte);
                     ft = fte.toString();   
                     
                     Cell cfte2 = wb.getSheetAt(0).getRow(i).getCell(10, xc.CREATE_NULL_AS_BLANK);
-                    Float fte2 = 0.0f;
+                    Float fte2 = 0.00000f;
                     String ft2 = new String();
                     fte2 = nullFloat(cfte2, fte2);
                     ft2 = fte2.toString();         
                           
                     Cell cfte3 = wb.getSheetAt(0).getRow(i).getCell(12, xc.CREATE_NULL_AS_BLANK);
-                    Float fte3 = 0.0f;
+                    Float fte3 = 0.00000f;
                     String ft3 = new String();
                     fte3 = nullFloat(cfte3, fte3);
                     ft3 = fte3.toString();
                     System.out.println("-----------------------------------------");
                     
+                    
+                    
+                    if(matchCursor.hasNext()){
+                        System.out.println("MATCH");
+
                 
-                    document.put("pID", projectID);
-                    //document.put("time", time);
-                    document.put("category", cate);
-                    document.put("pLead", projLead);
-                    document.put("fte", ft);
-                    document.put("co-inv", coinID);
-                    document.put("fteCO", ft2);
-                    document.put("co-inv2", coinID2);
-                    document.put("fteCO2", ft3);
+                        //document.put("time", time);
+                        document.put("category", cate);
+                        Float addft = 0.00000f;
+                        addft += fte;
+                        document.put("fte", ft);
+                        document.put("pLead", projLead);
+                        collection.update(matchCursor.next(), new BasicDBObject("$set",document));
+                        
+                        if(!"".equals(coinID)){
+                            if(matchCo.hasNext()){
+                                document.put("category", cate);
+                                document.put("fteCO", ft2);
+                                document.put("co-inv", coinID);
+                                collection.update(matchCo.next(), new BasicDBObject("$set",document));
+                            }
+                        }
+                        
+                        if(!"".equals(coinID2)){
+                            if(matchCo2.hasNext()){
+                                document.put("category", cate);
+                                document.put("fteCO2", ft3);
+                                document.put("co-inv2", coinID2);
+                                collection.update(matchCo2.next(), new BasicDBObject("$set",document));
+                            }
+                        }
+                    
+                    }
 
                     
-                    collection.insert(document);
                     }
                 }     
                 
-            }
+    
                 
     }
 
