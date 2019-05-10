@@ -28,8 +28,10 @@ public class TAS {
 //        WriteReport.writeReport();
        // XLSXtoDB.xlsxtoDB();
         //ReadXml.readXml();
-       // AwardstoDB.awardstoDB();
-        Research.research();
+       //AwardstoDB.awardstoDB();
+        //Research.research();
+        Teaching.teaching();
+
     }
     
 }
