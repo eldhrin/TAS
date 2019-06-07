@@ -29,8 +29,9 @@ public class TAS {
        // XLSXtoDB.xlsxtoDB();
         //ReadXml.readXml();
        //AwardstoDB.awardstoDB();
-        //Research.research();
-        Teaching.teaching();
+        Research.research();
+        //Teaching.teaching();
+        //TeachingXLSX.teachingXLSX();
 
     }
     
