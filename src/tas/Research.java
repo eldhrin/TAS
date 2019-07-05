@@ -9,10 +9,12 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,7 +32,7 @@ public class Research {
         }
         //if DoubleCell != blank, d = value of cell
         else{
-            String con = c.toString();
+            fl = Float.parseFloat(c.toString());
         }
         return fl;
     }
@@ -55,23 +57,30 @@ public class Research {
     public static void research() throws IOException, ParseException{
         //connect to local mongodb
         Mongo mongo = new Mongo("localhost", 27017);
-        DB tas = mongo.getDB("TAS");
+        DB tas = mongo.getDB("RESEARCH");
         //find collection TAS
-        DBCollection collection = tas.getCollection("TAS2");
+        DBCollection collection = tas.getCollection("RESEARCH");
         
         //remove all entries from the database
-//        DBCursor rem = collection.find();
-//        while(rem.hasNext()){
-//            collection.remove(rem.next());
-//        }
+        DBCursor rem = collection.find();
+        while(rem.hasNext()){
+            collection.remove(rem.next());
+        }
+        int in = 0;
         //user chooses directory containing all users tas excel sheets
         
          //read excel file
-                XSSFWorkbook wb = new XSSFWorkbook("TAS.xlsx");
+                XSSFWorkbook wb = new XSSFWorkbook("S:\\Computing\\TAS\\TAS-Research Projects.xlsx");
                 
-                for(int i = 1; i < 28; i++){
+                for(int i = 5; i < 26; i++){
+                    System.out.println(in);
                     BasicDBObject document = new BasicDBObject();
                     BasicDBObject tdoc = new BasicDBObject();
+                    
+                    Cell projID = wb.getSheetAt(0).getRow(i).getCell(1, xc.CREATE_NULL_AS_BLANK);
+                    String proj = new String();
+                    proj = Null.nullString(projID, proj);
+                    document.put("uID", proj);
                     
                     Cell cProjectLead = wb.getSheetAt(0).getRow(i).getCell(7, xc.CREATE_NULL_AS_BLANK);
                     String projectLead = new String();
@@ -79,156 +88,131 @@ public class Research {
                     String[] plead = projectLead.split(",");
                     String projLead = plead[0];
                     projLead = projLead.toUpperCase();
+                    document.put("projLead", projLead);
                     
-                    Cell cCoinv = wb.getSheetAt(0).getRow(i).getCell(9, xc.CREATE_NULL_AS_BLANK);
+                    Cell cCoinv = wb.getSheetAt(0).getRow(i).getCell(10, xc.CREATE_NULL_AS_BLANK);
                     String coinv = new String();
                     coinv = Null.nullString(cCoinv, coinv);
                     String[] coin = coinv.split(",");
                     String coinID = coin[0];
                     coinID = coinID.toUpperCase();
+                    document.put("co inv 1", coinID);
                     
-                    Cell cCoinv2 = wb.getSheetAt(0).getRow(i).getCell(11, xc.CREATE_NULL_AS_BLANK);
+                    Cell cCoinv2 = wb.getSheetAt(0).getRow(i).getCell(13, xc.CREATE_NULL_AS_BLANK);
                     String coinv2 = new String();
                     coinv2 = Null.nullString(cCoinv2, coinv2);
                     String[] coin2 = coinv2.split(",");
                     String coinID2 = coin2[0];
                     coinID2 = coinID2.toUpperCase();
+                    document.put("co inv 2", coinID2);
                     
-                    BasicDBObject match_id = new BasicDBObject("uID", projLead);
-                    DBCursor matchCursor = collection.find(match_id);
+                    Cell length = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
+                    Double lng = 0.0;
+                    lng = Null.nullDouble(length, lng);
+                   
+                    Cell fte = wb.getSheetAt(0).getRow(i).getCell(9, xc.CREATE_NULL_AS_BLANK);
+                    Double ft = 0.0;
+                    System.out.println("evaluated as " + fte.getNumericCellValue());
+                    ft = fte.getNumericCellValue();
+                    ft = ft*lng;
+                    ft = ft/4;
+                    document.put("fte", ft);
                     
-                    BasicDBObject match_co = new BasicDBObject("uID", coinID);
-                    DBCursor matchCo = collection.find(match_co);
+                    Date date = new Date();
+                    System.out.println(date);
                     
-                    BasicDBObject match_co2 = new BasicDBObject("uID", coinID2);
-                    DBCursor matchCo2 = collection.find(match_co2);
+                    Cell ctime = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
+                    Date time = ctime.getDateCellValue();
+                    System.out.println(time);
                     
-                    Cell cprojectID = wb.getSheetAt(0).getRow(i).getCell(1, xc.CREATE_NULL_AS_BLANK);
-                    String projectID = new String();
-                    projectID = Null.nullString(cprojectID, projectID);
+                    Cell cStart = wb.getSheetAt(0).getRow(i).getCell(3);
+                    Date pStart = cStart.getDateCellValue();
+                    System.out.println(pStart);
                     
+                    Cell cEnd = wb.getSheetAt(0).getRow(i).getCell(4);
+                    Date pEnd = cEnd.getDateCellValue();
+                    System.out.println(pEnd);
                     
-//                    Cell ctime = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
-//                    Double time = 0.0;
-//                    time = Null.nullDouble(ctime, time);
-//                    System.out.println(time);
+                    boolean between = false;
                     
-//                    Cell cStart = wb.getSheetAt(0).getRow(i).getCell(4);
-//                    Date pStart = new Date();
-//                    String sStart = new String();      
-//                    pStart = nullDate(cStart, sStart);
-//                    System.out.println(pStart);
-//                    
-//                    Cell cEnd = wb.getSheetAt(0).getRow(i).getCell(5);
-//                    Date pEnd = new Date();
-//                    String sEnd = new String();
-//                    pEnd = nullDate(cEnd, sEnd);
-//                    System.out.println(pEnd);
-                    
+                    if(date != null && pStart != null && pEnd != null){
+                        if(date.after(pStart) && date.before(pEnd)){
+                            between = true;
+                        }
+                        else{
+                            between = false;
+                        }
+                    }
+                    System.out.println(between);
 
                     Cell cCategory = wb.getSheetAt(0).getRow(i).getCell(6, xc.CREATE_NULL_AS_BLANK);
                     String category = new String();
                     category = Null.nullString(cCategory, category);
                     String[] cate = category.split(",");
+                    ArrayList array = new ArrayList<String>();
                     for(int x = 0; x< cate.length; x++){
                         System.out.println(cate[x] + "\n");
+                        
                         if(cate[x].contains("Research Councils") || cate[x].contains("research councils") || cate[x].contains("RESEARCH COUNCILS")){
-                            String research_c = cate[x];
+                            array.add(cate[x]);   
                         }
                         else if(cate[x].contains("UK Govt Depts") || cate[x].contains("uk govt depts") || cate[x].contains("UK GOVT DEPTS") || cate[x].contains("UK Government Departments") || cate[x].contains("uk government departments") || cate[x].contains("UK GOVERNMENT DEPARTMENTS")){
-                            String uk_gov = cate[x];
-                            document.put("uk gov", uk_gov);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("European Commission") || cate[x].contains("european commission") || cate[x].contains("EUROPEAN COMMISSION") || cate[x].contains("EU Commission") || cate[x].contains("eu commission") || cate[x].contains("EU COMMISSION")){
-                            String eu = cate[x];
-                            document.put("eu", eu);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("UK Charities") || cate[x].contains("uk charities") || cate[x].contains("UK CHARITIES")){
-                            String uk_charity = cate[x];
-                            document.put("uk charity", uk_charity);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("UK Industry") || cate[x].contains("uk industry") || cate[x].contains("UK INDUSTRY")){
-                            String uk_ind = cate[x];
-                            document.put("uk ind", uk_ind);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("KTPs") || cate[x].contains("ktps") || cate[x].contains("KTPS")){
-                            String ktp = cate[x];
-                            document.put("ktp", ktp);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("Other") || cate[x].contains("OTHER") || cate[x].contains("other")){
-                            String other = cate[x];
-                            document.put("other", other);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("PGR") || cate[x].contains("pgr")){
-                            String pgr = cate[x];
-                            document.put("pgr", pgr);
+                            array.add(cate[x]);
                         }
                         else if(cate[x].contains("SFC") || cate[x].contains("sfc") || cate[x].contains("Sfc")){
-                            String sfc = cate[x];
-                            document.put("sfc", sfc);
+                            array.add(cate[x]);
                         }
                         else{
-                            String other_o = cate[x];
-                            document.put("unident", other_o);
+                            array.add(cate[x]);
                         }
+                        
                     }
+                    document.put("cate", array);
+                                         
+                    Cell cfte2 = wb.getSheetAt(0).getRow(i).getCell(12, xc.CREATE_NULL_AS_BLANK);
+                    Double fte2 = 0.0;
+                    fte2 = cfte2.getNumericCellValue();
+                    fte2 = fte2*lng;
+                    fte2 = fte2/4;
+                    document.put("fte2", fte2);     
                     
-                    Cell cfte = wb.getSheetAt(0).getRow(i).getCell(8, xc.CREATE_NULL_AS_BLANK);
-                    Float fte = 0.00000f;
-                    String ft = new String();
-                    fte = nullFloat(cfte, fte);
-                    ft = fte.toString();   
-                    
-                    Cell cfte2 = wb.getSheetAt(0).getRow(i).getCell(10, xc.CREATE_NULL_AS_BLANK);
-                    Float fte2 = 0.00000f;
-                    String ft2 = new String();
-                    fte2 = nullFloat(cfte2, fte2);
-                    ft2 = fte2.toString();         
                           
-                    Cell cfte3 = wb.getSheetAt(0).getRow(i).getCell(12, xc.CREATE_NULL_AS_BLANK);
-                    Float fte3 = 0.00000f;
-                    String ft3 = new String();
-                    fte3 = nullFloat(cfte3, fte3);
-                    ft3 = fte3.toString();
+                    Cell cfte3 = wb.getSheetAt(0).getRow(i).getCell(15, xc.CREATE_NULL_AS_BLANK);
+                    Double fte3 = 0.0;
+                    fte3 = cfte3.getNumericCellValue();
+                    fte3 = fte3*lng;
+                    fte3 = fte3/4;
+                    document.put("fte3", fte3);
                     System.out.println("-----------------------------------------");
-                    
-                    
-                    
-                    if(matchCursor.hasNext()){
-                        System.out.println("MATCH");
+                    if(between == true){
+                        collection.insert(document);
+                    }
+                    in++;
 
+                    
+                }
                 
-                        //document.put("time", time);
-                        document.put("category", cate);
-                        Float addft = 0.00000f;
-                        addft += fte;
-                        document.put("fte", ft);
-                        document.put("pLead", projLead);
-                        collection.update(matchCursor.next(), new BasicDBObject("$set",document));
-                        
-                        if(!"".equals(coinID)){
-                            if(matchCo.hasNext()){
-                                document.put("category", cate);
-                                document.put("fteCO", ft2);
-                                document.put("co-inv", coinID);
-                                collection.update(matchCo.next(), new BasicDBObject("$set",document));
-                            }
-                        }
-                        
-                        if(!"".equals(coinID2)){
-                            if(matchCo2.hasNext()){
-                                document.put("category", cate);
-                                document.put("fteCO2", ft3);
-                                document.put("co-inv2", coinID2);
-                                collection.update(matchCo2.next(), new BasicDBObject("$set",document));
-                            }
-                        }
-                    
-                    }
-
-                    
-                    }
-                }     
+                
+                
+        }     
                 
     
                 
