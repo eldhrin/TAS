@@ -102,26 +102,27 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
-            GetXlsx.getXlsx();
+            XLSXtoDB.xlsxtoDB();
             GetHols.getHols();
-            WriteXlsx.writeXlsx();
+            WriteReport.writeReport();
         } catch (IOException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidFormatException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
-            GenerateXlsx.generateXlsx();
+            SWLtoDB.SWLtoDB();
+            DBtoXLSX.DBtoXLSX();
         } catch (IOException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidFormatException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

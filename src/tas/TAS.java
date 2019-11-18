@@ -21,18 +21,31 @@ public class TAS {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, InvalidFormatException, ParseException, ParserConfigurationException, SAXException, TransformerException {
-        
+        //Teaching.teaching();
+        //GetHols.getHols();
+        //DBtoXLSX.DBtoXLSX();
         //SWLtoDB.SWLtoDB();
-         //DBtoXLSX.DBtoXLSX();
-         //GetHols.getHols();
-//        WriteReport.writeReport();
-       // XLSXtoDB.xlsxtoDB();
+        //DBtoXLSX.DBtoXLSX();
+        //GetHols.getHols();
+        //DBtoXLSX.DBtoXLSX();
+        //WriteReport.writeReport();
+        //XLSXtoDB.xlsxtoDB();
         //ReadXml.readXml();
-       //AwardstoDB.awardstoDB();
-        Research.research();
+        //AwardstoDB.awardstoDB();
+        //Research.research();
         //Teaching.teaching();
         //TeachingXLSX.teachingXLSX();
-
+        //CompareResearch.compareResearch();
+        //TeachingTemp.teachingTemp();
+        
+        //GetPGR.GetPGR();
+        // TEST PutPGR.PutPGR();
+        //NullifyXLSX.nullify();
+        //GetWorkloadModel.GetWorkloadModel();
+        //GrabRemainingTime.GrabRemainingTime(); // WRITES PGR ALLOCATION
+        //WriteReportWorkload.writeReport();
+        //WriteReportResearch.writeReport();
+        Research.research();
     }
     
 }

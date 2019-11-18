@@ -52,83 +52,102 @@ public class AwardstoDB {
         
          //read excel file
                 XSSFWorkbook wb = new XSSFWorkbook("ApplicationsAndAwards.xlsx");
+                int count = 0;
                 
-                for(int i = 4; i < 23; i++){
-                    Cell cProjectTitle = wb.getSheetAt(1).getRow(i).getCell(0, xc.CREATE_NULL_AS_BLANK);
+                
+                for(int x = 4; x < 22; x++){
+                    
+                    Cell cProjectTitle = wb.getSheetAt(1).getRow(x).getCell(0, xc.CREATE_NULL_AS_BLANK);
                     String projectTitle = new String();
                     projectTitle = Null.nullString(cProjectTitle, projectTitle);
-                    System.out.println(projectTitle);
                     
-                    Cell cPID = wb.getSheetAt(1).getRow(i).getCell(1, xc.CREATE_NULL_AS_BLANK);
+                    
+                    Cell cPID = wb.getSheetAt(1).getRow(x).getCell(1, xc.CREATE_NULL_AS_BLANK);
                     String PID =  new String();
                     PID = Null.nullString(cPID, PID);
-                    System.out.println(PID);
-                    
-                    Cell cPLead = wb.getSheetAt(1).getRow(i).getCell(2, xc.CREATE_NULL_AS_BLANK);
+                    //System.out.println(PID);
+
+                        
+                    Cell cPLead = wb.getSheetAt(1).getRow(x).getCell(2, xc.CREATE_NULL_AS_BLANK);
                     String PLead = new String();
                     PLead = Null.nullString(cPLead, PLead);
-                    System.out.println(PLead);
-                    
-                    Cell cco1 = wb.getSheetAt(1).getRow(i).getCell(3, xc.CREATE_NULL_AS_BLANK);
-                    String co1 = new String();
-                    co1 = Null.nullString(cco1, co1);
-                    System.out.println(co1);
-                    
-                    Cell cco2 = wb.getSheetAt(1).getRow(i).getCell(4, xc.CREATE_NULL_AS_BLANK);
-                    String co2 = new String();
-                    co2 = Null.nullString(cco2, co2);
-                    System.out.println(co2);
-                    
-                    Cell cco3 = wb.getSheetAt(1).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
-                    String co3 = new String();
-                    co3 = Null.nullString(cco3, co3);
-                    System.out.println(co3);
-                    
-                    Cell csDate = wb.getSheetAt(1).getRow(i).getCell(6, xc.CREATE_NULL_AS_BLANK);
-                    String newDate = new String();
-                    Date sDate = new Date();
-                    sDate = nullDate(csDate, newDate);
-                    System.out.println("Start date: " + sDate);
-                    
-                    Cell ceDate = wb.getSheetAt(1).getRow(i).getCell(7, xc.CREATE_NULL_AS_BLANK);
-                    String secondDate = new String();
-                    Date eDate = new Date();
-                    eDate = nullDate(ceDate, secondDate);
-                    System.out.println("end date: " + eDate);
-                    System.out.println("--------------------------------------------------");
-                   
-                    BasicDBObject query = new BasicDBObject("name", PLead);
-                    //if user ID is already in the DB then update the entry
-                    //if user ID is not in the DB then add them
-                    DBCursor cursor = collection.find(query);
-                    BasicDBObject document = new BasicDBObject();
-                    if(cursor.hasNext()){
-                        document.put("project", projectTitle);
-                        collection.update(cursor.next(), new BasicDBObject("$set",document));
+                    for(int j = 4; j < 22; j++){
+                        Cell cPLeadcomp = wb.getSheetAt(1).getRow(j).getCell(2, xc.CREATE_NULL_AS_BLANK);
+                        String PLeadcomp = new String();
+                        PLeadcomp = Null.nullString(cPLeadcomp, PLeadcomp);
+                        if(PLeadcomp.equals(PLead)){
+                            System.out.println(j);
+                            System.out.println("MATCHING");
+                            System.out.println("---------------------------------------------");
+                            //BasicDBObject query03 = new BasicDBObject("name", co3);
+                        }
+                        else{
+
+                            Cell cco1 = wb.getSheetAt(1).getRow(x).getCell(3, xc.CREATE_NULL_AS_BLANK);
+                            String co1 = new String();
+                            co1 = Null.nullString(cco1, co1);
+                            //System.out.println(co1);
+
+                            Cell cco2 = wb.getSheetAt(1).getRow(x).getCell(4, xc.CREATE_NULL_AS_BLANK);
+                            String co2 = new String();
+                            co2 = Null.nullString(cco2, co2);
+                            //System.out.println(co2);
+
+                            Cell cco3 = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
+                            String co3 = new String();
+                            co3 = Null.nullString(cco3, co3);
+                            //System.out.println(co3);
+
+                            Cell csDate = wb.getSheetAt(1).getRow(x).getCell(6, xc.CREATE_NULL_AS_BLANK);
+                            String newDate = new String();
+                            Date sDate = new Date();
+                            sDate = nullDate(csDate, newDate);
+                            //System.out.println("Start date: " + sDate);
+
+                            Cell ceDate = wb.getSheetAt(1).getRow(x).getCell(7, xc.CREATE_NULL_AS_BLANK);
+                            String secondDate = new String();
+                            Date eDate = new Date();
+                            eDate = nullDate(ceDate, secondDate); 
+                            //System.out.println("end date: " + eDate);
+                            System.out.println(x);
+
+                            BasicDBObject query = new BasicDBObject("name", PLead);
+                            //if user ID is already in the DB then update the entry
+                            //if user ID is not in the DB then add them
+                            DBCursor cursor = collection.find(query);
+                            BasicDBObject document = new BasicDBObject();
+
+                            if(cursor.hasNext()){
+                                document.put("project", projectTitle);
+                                collection.update(cursor.next(), new BasicDBObject("$set",document));
+                            }
+
+                            BasicDBObject query01 = new BasicDBObject("name", co1);
+                            DBCursor cursor01 = collection.find(query01);
+
+                            if(cursor01.hasNext()){
+                                document.put("project1", projectTitle);
+                                collection.update(cursor01.next(), new BasicDBObject("$set",document));
+                            }
+
+                            BasicDBObject query02 = new BasicDBObject("name", co2);
+                            DBCursor cursor02 = collection.find(query02);
+
+                            if(cursor02.hasNext()){
+                                document.put("project2", projectTitle);
+                                collection.update(cursor02.next(), new BasicDBObject("$set",document));
+                            }
+
+                            BasicDBObject query03 = new BasicDBObject("name", co3);
+                            DBCursor cursor03 = collection.find(query03);
+
+                            if(cursor03.hasNext()){
+                                document.put("project3", projectTitle);
+                                collection.update(cursor03.next(), new BasicDBObject("$set",document));
+                            }
+                        }
                     }
                     
-                    BasicDBObject query01 = new BasicDBObject("name", co1);
-                    DBCursor cursor01 = collection.find(query01);
-                    if(cursor01.hasNext()){
-                        document.put("project1", projectTitle);
-                        collection.update(cursor01.next(), new BasicDBObject("$set",document));
-                    }
-                    
-                    BasicDBObject query02 = new BasicDBObject("name", co2);
-                    DBCursor cursor02 = collection.find(query02);
-                    if(cursor02.hasNext()){
-                        document.put("project2", projectTitle);
-                        collection.update(cursor02.next(), new BasicDBObject("$set",document));
-                    }
-                    
-                    BasicDBObject query03 = new BasicDBObject("name", co3);
-                    DBCursor cursor03 = collection.find(query03);
-                    if(cursor03.hasNext()){
-                        document.put("project3", projectTitle);
-                        collection.update(cursor03.next(), new BasicDBObject("$set",document));
-                    }
                 }
-                    
-            }
-               
-    }
+        }
+}
