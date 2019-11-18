@@ -15,7 +15,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -57,7 +62,7 @@ public class Research {
     public static void research() throws IOException, ParseException{
         //connect to local mongodb
         Mongo mongo = new Mongo("localhost", 27017);
-        DB tas = mongo.getDB("RESEARCH");
+        DB tas = mongo.getDB("TAS");
         //find collection TAS
         DBCollection collection = tas.getCollection("RESEARCH");
         
@@ -67,83 +72,159 @@ public class Research {
             collection.remove(rem.next());
         }
         int in = 0;
+        String addChar = "";
+        Double charper = 0.0;
+        Double percent = 0.0;
         //user chooses directory containing all users tas excel sheets
         
          //read excel file
                 XSSFWorkbook wb = new XSSFWorkbook("S:\\Computing\\TAS\\TAS-Research Projects.xlsx");
                 
-                for(int i = 5; i < 26; i++){
-                    System.out.println(in);
+                for(int i = 10; i < 30; i++){
+                    
                     BasicDBObject document = new BasicDBObject();
                     BasicDBObject tdoc = new BasicDBObject();
+                    
+                    Cell length = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
+                    Double lng = 0.0;
+                    lng = Null.nullDouble(length, lng);
+                    
+                    
+                    Date date = new GregorianCalendar(2019, Calendar.JUNE, 11).getTime();
+                    System.out.println(date);
+                    
+                    Cell ctime = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
+                    Date time = ctime.getDateCellValue();
+                    
+                    Cell cStart = wb.getSheetAt(0).getRow(i).getCell(3);
+                    Date pStart = cStart.getDateCellValue();
+                    
+                    Cell cEnd = wb.getSheetAt(0).getRow(i).getCell(4);
+                    Date pEnd = cEnd.getDateCellValue();
+                    
+                    boolean between = false;
+                    
+                    if(pStart != null && pEnd != null){
+                        if(date.after(pStart) && date.before(pEnd)){
+                            between = true;
+                            System.out.println(pStart);
+                            System.out.println(pEnd);
+                        }
+                        else{
+                            between = false;
+                        }
+                    }
+                    if(between == false){
+                        continue;
+                    }
+                    else{
+                    System.out.println(in);
                     
                     Cell projID = wb.getSheetAt(0).getRow(i).getCell(1, xc.CREATE_NULL_AS_BLANK);
                     String proj = new String();
                     proj = Null.nullString(projID, proj);
                     document.put("uID", proj);
                     
+                    document.put("length", lng);
+                    
                     Cell cProjectLead = wb.getSheetAt(0).getRow(i).getCell(7, xc.CREATE_NULL_AS_BLANK);
                     String projectLead = new String();
                     projectLead = Null.nullString(cProjectLead, projectLead);
-                    String[] plead = projectLead.split(",");
-                    String projLead = plead[0];
+                    String projLead = "";
+                    projLead = projectLead;
+                    String[] project = new String[4];
+                    String[] projectp = projLead.split("\\s+");
+                    ArrayList projectL = new ArrayList<String>();          
                     projLead = projLead.toUpperCase();
+                    int prolength = project.length;
+                    System.out.println(Arrays.toString(projectp));
+                    if(projectLead.equals("")){
+                        project[0] = " ";
+                        project[1] = " ";
+                        project[2] = " ";
+                        project[3] = " ";
+                    }
+//                    projectL.add(project[1]);          
+//                    if(prolength <= 2){
+//                        projectL.add("");
+//                    }
+//                    else{
+//                        projectL.add(project[2]);
+//                    }
+                    
                     document.put("projLead", projLead);
                     
                     Cell cCoinv = wb.getSheetAt(0).getRow(i).getCell(10, xc.CREATE_NULL_AS_BLANK);
                     String coinv = new String();
                     coinv = Null.nullString(cCoinv, coinv);
-                    String[] coin = coinv.split(",");
-                    String coinID = coin[0];
+                    String coinID = "";
+                    coinID = coinv;
+                    String[] coin1 = new String[4];
+                    String[] coin1p = coinv.split("\\s+");
+                    ArrayList coINV = new ArrayList<String>();
                     coinID = coinID.toUpperCase();
-                    document.put("co inv 1", coinID);
+                    int colength = coin1.length;
+                    System.out.println(Arrays.toString(coin1p));
+                    if(coinv.equals("")){
+                        coin1[0] = " ";
+                        coin1[1] = " ";
+                        coin1[2] = " ";
+                        coin1[3] = " ";
+                    }
+//                    coINV.add(coin1[1]);
+//                    if(colength <= 2){
+//                        coINV.add("");
+//                    }
+//                    else{
+//                        coINV.add(coin1[2]);
+//                    }
+//                    
+//                    document.put("co inv 1", coinID);
                     
                     Cell cCoinv2 = wb.getSheetAt(0).getRow(i).getCell(13, xc.CREATE_NULL_AS_BLANK);
                     String coinv2 = new String();
                     coinv2 = Null.nullString(cCoinv2, coinv2);
-                    String[] coin2 = coinv2.split(",");
-                    String coinID2 = coin2[0];
+                    String coinID2 = "";
+                    coinID2 = coinv2;
+                    String[] coin2 = new String[4];
+                    String[] coin2p = coinv2.split("\\s+");
+                    ArrayList coINV1 = new ArrayList<String>();
                     coinID2 = coinID2.toUpperCase();
-                    document.put("co inv 2", coinID2);
+                    int co2length = coin2.length;
+                    System.out.println(Arrays.toString(coin2p));
+                    if(coinID2.equals("")){
+                        coin2[0] = " ";
+                        coin2[1] = " ";
+                        coin2[2] = " ";
+                        coin2[3] = " ";
+                    }
                     
-                    Cell length = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
-                    Double lng = 0.0;
-                    lng = Null.nullDouble(length, lng);
+//                    coINV1.add(coin2[1]);
+//                    if(co2length <= 2){
+//                        coINV1.add("");
+//                    }
+//                    else{
+//                        coINV1.add(coin2[2]);
+//                    }
+//                    document.put("co inv 2", coinID2);
                    
                     Cell fte = wb.getSheetAt(0).getRow(i).getCell(9, xc.CREATE_NULL_AS_BLANK);
                     Double ft = 0.0;
-                    System.out.println("evaluated as " + fte.getNumericCellValue());
+                    Double fte10 = 0.0;
                     ft = fte.getNumericCellValue();
-                    ft = ft*lng;
-                    ft = ft/4;
-                    document.put("fte", ft);
-                    
-                    Date date = new Date();
-                    System.out.println(date);
-                    
-                    Cell ctime = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
-                    Date time = ctime.getDateCellValue();
-                    System.out.println(time);
-                    
-                    Cell cStart = wb.getSheetAt(0).getRow(i).getCell(3);
-                    Date pStart = cStart.getDateCellValue();
-                    System.out.println(pStart);
-                    
-                    Cell cEnd = wb.getSheetAt(0).getRow(i).getCell(4);
-                    Date pEnd = cEnd.getDateCellValue();
-                    System.out.println(pEnd);
-                    
-                    boolean between = false;
-                    
-                    if(date != null && pStart != null && pEnd != null){
-                        if(date.after(pStart) && date.before(pEnd)){
-                            between = true;
-                        }
-                        else{
-                            between = false;
-                        }
-                    }
-                    System.out.println(between);
+
+                                         
+                    Cell cfte2 = wb.getSheetAt(0).getRow(i).getCell(12, xc.CREATE_NULL_AS_BLANK);
+                    Double fte2 = 0.0;
+                    Double fte11 = 0.0;
+                    fte2 = cfte2.getNumericCellValue();
+
+                                             
+                    Cell cfte3 = wb.getSheetAt(0).getRow(i).getCell(15, xc.CREATE_NULL_AS_BLANK);
+                    Double fte3 = 0.0;
+                    Double fte12 = 0.0;
+                    fte3 = cfte3.getNumericCellValue();
+
 
                     Cell cCategory = wb.getSheetAt(0).getRow(i).getCell(6, xc.CREATE_NULL_AS_BLANK);
                     String category = new String();
@@ -152,6 +233,9 @@ public class Research {
                     ArrayList array = new ArrayList<String>();
                     for(int x = 0; x< cate.length; x++){
                         System.out.println(cate[x] + "\n");
+                        
+                        String[] splitC = category.split("\\s+");
+                        ArrayList FinArray = new ArrayList<String>();
                         
                         if(cate[x].contains("Research Councils") || cate[x].contains("research councils") || cate[x].contains("RESEARCH COUNCILS")){
                             array.add(cate[x]);   
@@ -168,7 +252,7 @@ public class Research {
                         else if(cate[x].contains("UK Industry") || cate[x].contains("uk industry") || cate[x].contains("UK INDUSTRY")){
                             array.add(cate[x]);
                         }
-                        else if(cate[x].contains("KTPs") || cate[x].contains("ktps") || cate[x].contains("KTPS")){
+                        else if(cate[x].contains("KTPs") || cate[x].contains("ktps") || cate[x].contains("KTPS") || cate[x].contains("KTP") || cate[x].contains("ktp")){
                             array.add(cate[x]);
                         }
                         else if(cate[x].contains("Other") || cate[x].contains("OTHER") || cate[x].contains("other")){
@@ -180,31 +264,55 @@ public class Research {
                         else if(cate[x].contains("SFC") || cate[x].contains("sfc") || cate[x].contains("Sfc")){
                             array.add(cate[x]);
                         }
-                        else{
+                        else if(cate[x].contains("Internal") || cate[x].contains("INTERNAL") || cate[x].contains("internal")){
                             array.add(cate[x]);
                         }
+                        else{
+                            array.add("");
+                        }
+                        
+                        
+                        Matcher m = Pattern.compile("\\((.*?)\\)").matcher(cate[x]);
+                        while(m.find() == true) {
+                        String per = m.group(0);
+                        char charAtZero = per.charAt(1);
+                        char charAtOne = per.charAt(2);
+                        addChar = "" + charAtZero + charAtOne;
+                        charper = Double.parseDouble(addChar);
+                        percent = (double)charper/100;
+                        }
+                        
+                        fte10 = ft*percent;
+                        array.add(fte10);
+                        fte11 = fte2*percent;
+                        array.add(fte11);
+                        fte12 = fte3*percent;
+                        array.add(fte12);
+                        
+                        if(cate.length <= 1){
+                            array.add("");
+                        }
+
+                        
                         
                     }
-                    document.put("cate", array);
-                                         
-                    Cell cfte2 = wb.getSheetAt(0).getRow(i).getCell(12, xc.CREATE_NULL_AS_BLANK);
-                    Double fte2 = 0.0;
-                    fte2 = cfte2.getNumericCellValue();
-                    fte2 = fte2*lng;
-                    fte2 = fte2/4;
-                    document.put("fte2", fte2);     
-                    
-                          
-                    Cell cfte3 = wb.getSheetAt(0).getRow(i).getCell(15, xc.CREATE_NULL_AS_BLANK);
-                    Double fte3 = 0.0;
-                    fte3 = cfte3.getNumericCellValue();
-                    fte3 = fte3*lng;
-                    fte3 = fte3/4;
-                    document.put("fte3", fte3);
-                    System.out.println("-----------------------------------------");
-                    if(between == true){
-                        collection.insert(document);
+                    if(cate.length <2){
+                        for(int a = 1; a<=3; a++){
+                            array.add(0);
+                        }
                     }
+                    
+                    
+                    document.put("fte", ft);
+                    document.put("fte2", fte2);
+                    document.put("fte3", fte3);
+
+                    document.put("cate", array);
+                    
+                    
+                    
+                    System.out.println("-----------------------------------------");
+                    collection.insert(document);
                     in++;
 
                     
@@ -212,11 +320,13 @@ public class Research {
                 
                 
                 
-        }     
+                    
+                }
                 
     
                 
     }
+}
 
                 
                 
