@@ -47,7 +47,7 @@ public class Null {
     public static int getDate(){
         //collection dates
         //1/10 - 31/01
-        //1/2-31/5
+        //1/2 - 31/5
         //1/6 - 30/9
         Date sem = new Date();
         Calendar cal = Calendar.getInstance();

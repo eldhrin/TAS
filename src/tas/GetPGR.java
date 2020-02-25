@@ -83,6 +83,9 @@ public class GetPGR {
                 //if the object is found then add to it
                 if(cursor.hasNext()){
                     DBObject o = cursor.next();
+                    System.out.println(supervisor);
+                    System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    System.out.println(o.get("Supervisor").toString());
                     Double pgrOG = Double.parseDouble(o.get("PGR Allocation").toString());
                     pgrOG += pgrAllocationF;
                     document.put("PGR Allocation", pgrOG);
@@ -91,6 +94,7 @@ public class GetPGR {
                 }
                 else{
                     document.put("Supervisor", supe);
+                    System.out.println(supervisor);
                     document.put("PGR Allocation", pgrAllocationF);
          
                     collection.insert(document);

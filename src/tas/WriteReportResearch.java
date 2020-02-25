@@ -68,16 +68,60 @@ public class WriteReportResearch {
                     
                     DBObject r = res.next();
                     DBObject rc = (DBObject) r.get("cate");
-                        System.out.println(j);
-                        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    DBObject ProjectLead = (DBObject) r.get("projLead");
+                    DBObject CoInv1 = (DBObject) r.get("co inv 1");
+                    DBObject CoInv2 = (DBObject) r.get("co inv 2");
+                    System.out.println(j);
+                    System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                    
                         for(x = count; x < 34; x++){
                             Cell cLName = wb.getSheetAt(1).getRow(x).getCell(0, xc.CREATE_NULL_AS_BLANK);
                             String lName = new String();
                             System.out.println(x);
                             lName = Null.nullString(cLName, lName);
                             
-                            if(r.get("projLead").equals(lName.toUpperCase())){
+                            String firstP = ProjectLead.get("1").toString().toUpperCase();
+                            String check = ProjectLead.get("2").toString();
+                            if(check.equals("")){
+                                firstP = firstP;
+                            }
+                            else{
+                                firstP += " " + ProjectLead.get("2").toString().toUpperCase();
+                            }
+                            System.out.println("TEST " + firstP);
+                            
+                            
+                            
+                            String coInvF = CoInv1.get("1").toString().toUpperCase();
+                            String check1 = CoInv1.get("2").toString();
+                            if(check1.equals("")){
+                                coInvF = coInvF;
+                            }
+                            else{
+                                coInvF += " " + CoInv1.get("2").toString().toUpperCase();
+                                
+                            }
+                            System.out.println("SECOND " + coInvF);
+                            
+                            
+                            
+                            String coInvS = CoInv2.get("1").toString().toUpperCase();
+                            String check2 = CoInv2.get("2").toString();
+                            if(check2.equals("")){
+                                coInvS = coInvS;
+                            }
+                            else{
+                                coInvS += " " + CoInv2.get("2").toString().toUpperCase();
+                            }
+                            System.out.println("THIRD " + coInvS);
+                            
+                            System.out.println("--------------------------------");
+                            
+                            System.out.println(lName.toUpperCase());
+                            
+                            if(firstP.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                System.out.println("TRUE");
                                     String cate = rc.get("0").toString();
                                     if(cate.contains("Research Councils") || cate.contains("research councils") || cate.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -231,8 +275,9 @@ public class WriteReportResearch {
                             
                             
                             
-                            else if(r.get("co inv 1").equals(lName.toUpperCase())){
+                            else if(coInvF.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                System.out.println("TRUE");
                                     String cate1 = rc.get("0").toString();
                                     if(cate1.contains("Research Councils") || cate1.contains("research councils") || cate1.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -383,8 +428,9 @@ public class WriteReportResearch {
                             
 
                             
-                            else if(lName.toUpperCase().contains(r.get("co inv 2").toString())){
+                            else if(coInvS.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                System.out.println("TRUE");
                                     String cate2 = rc.get("0").toString();
                                     if(cate2.contains("Research Councils") || cate2.contains("research councils") || cate2.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -536,10 +582,10 @@ public class WriteReportResearch {
                             
                             }
                             
-                            if(rc.get("4") != ""){
                             
-                                if(r.get("projLead").equals(lName.toUpperCase())){
+                                if(firstP.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                    System.out.println("TRUE");
                                     String cate = rc.get("4").toString();
                                     if(cate.contains("Research Councils") || cate.contains("research councils") || cate.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -632,8 +678,9 @@ public class WriteReportResearch {
                                 
                             }  
                             
-                            else if(r.get("co inv 1").equals(lName.toUpperCase())){
+                            else if(coInvF.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                    System.out.println("TRUE");
                                     String cate1 = rc.get("4").toString();
                                     if(cate1.contains("Research Councils") || cate1.contains("research councils") || cate1.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -729,8 +776,9 @@ public class WriteReportResearch {
                             
 
                             
-                            else if(lName.toUpperCase().contains(r.get("co inv 2").toString())){
+                            else if(coInvS.equals(lName.toUpperCase())){
                                 System.out.println(lName);
+                                    System.out.println("TRUE");
                                     String cate2 = rc.get("4").toString();
                                     if(cate2.contains("Research Councils") || cate2.contains("research councils") || cate2.contains("RESEARCH COUNCILS")){
                                         Cell cRC = wb.getSheetAt(1).getRow(x).getCell(5, xc.CREATE_NULL_AS_BLANK);
@@ -838,7 +886,7 @@ public class WriteReportResearch {
                     
                 
         
-            }
+            
           wb.write(fileOut); 
         
         

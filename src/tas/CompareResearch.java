@@ -14,6 +14,7 @@ import com.mongodb.Mongo;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,6 +38,7 @@ public class CompareResearch {
      
      
      int dbcount = (int)collection.count();
+     Double total = 0.0;
      
      
      //find one from main DB, get the ID and match to research db
@@ -50,6 +52,7 @@ public class CompareResearch {
 
         for(int i =6; i <= 33; i++){
             DBObject o = compare.next();
+            Double research = Double.parseDouble(o.get("Research").toString());
             
             Cell lname = wb.getSheetAt(1).getRow(i).getCell(0, xc.CREATE_NULL_AS_BLANK);
             String lastName = new String();
@@ -139,106 +142,99 @@ public class CompareResearch {
             Double mgmt = 0.0;
             mgmt = Null.nullDouble(cmgmt, mgmt);
             
-            Double totRes = rcT + ukG + EU + ukC + ukI + ktp + other + sfc + sfcd + internal + suppint + sfcr;
+            Double totRes = rcT + ukG + EU + ukC + ukI + ktp + other + sfc + sfcd + pgr + internal + suppint + sfcr;
             
-            Double total = tAC + tSupp + rcT + ukG + EU + ukC + ukI + ktp + other + sfc + sfcd + internal + suppint + sfc + scholt + scholr + phd + otherserv + othersupp + mgmt;
-            System.out.println("TOTAL: " + total);
+            Double resadj = 0.0;
+            
+            if(totRes > research){
+                resadj = totRes - research;
+            }
+            else{
+                resadj = research - totRes;
+            }
+            
+            
+            
             System.out.println(lastName);
             System.out.println("PGR: " + pgr);
             System.out.println("TOTAL RESEARCH :" + totRes);
         
             
-            String lName = o.get("lastName").toString();
-            
-            Double research = Double.parseDouble(o.get("Research").toString());
-            Double remTime = Double.parseDouble(o.get("Remaining Time").toString());
             System.out.println("RESEARCH " + research);
-            Double adjusted = 0.0;
+                
+            if(resadj > 0.0){
+                
+            Double div = resadj/100;
+                
+            Double split80 = div*80; 
+            Double split20 = div*20;
+                
+            System.out.println("80 Split: " + split80);
+            System.out.println("20 Split: " + split20);
+                
+            Double ressupport = 0.0;
+            ressupport = suppint + split80;
+                
+            System.out.println(ressupport);
+            SuppInt.setCellValue(ressupport); 
+                
+            phd = phd + split20;
+            cphd.setCellValue(phd);
             
-            if(research == 0.0){
-                adjusted = remTime - totRes;
-                if(adjusted < 0.0){
-                    System.out.println("ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                }
-                System.out.println("REMAINING TIME: " + remTime);
-                System.out.println("NULL " + adjusted);
-                
-                Double div = adjusted/100;
-                
-                Double split45 = div*45;
-                
-                Double split10 = div*10;
-                
-                System.out.println("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
-                System.out.println(split45);
-                System.out.println(split10);
-                
-
-                
-                tSupp = Null.nullDouble(tsup, tSupp);
-                tSupp = tSupp + split45;
-                tsup.setCellValue(tSupp);
-                
-                scholt = Null.nullDouble(cscholt, scholt);
-                scholt = scholt + split45;
-                cscholt.setCellValue(scholt);
-                
-                mgmt = Null.nullDouble(cmgmt, mgmt);
-                mgmt = mgmt + split10;
-                cmgmt.setCellValue(mgmt);
             }
             
+            total = tAC + tSupp + rcT + ukG + EU + ukC + ukI + ktp + other + sfc + sfcr +  pgr + internal + SuppInt.getNumericCellValue() + sfcr + scholt + scholr + cphd.getNumericCellValue() + otherserv + othersupp + mgmt;
+            System.out.println(total);
             
-            else{
-                adjusted = research - totRes;
-                if(adjusted < 0.0){
-                    System.out.println("ADJUSTED " + research + " - " + totRes + " = " + adjusted);
-                    System.out.println("ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                }
-                System.out.println("FULL " + adjusted);
-                
-                Double div = adjusted/100;
-                
-                Double split80 = div*80; 
-                Double split20 = div*20;
-                
-                System.out.println(split80);
-                System.out.println(split20);
-                
-                Double ressupport = 0.0;
-                ressupport = suppint + split80;
-                
-                System.out.println(ressupport);
-                SuppInt.setCellValue(ressupport); 
-                
-                phd = phd + split20;
-                cphd.setCellValue(phd);
-                
-                System.out.println("REMAINING TIME: " + remTime);
-                Double remtime = remTime/100;
+            if(research == 0.0){
+                total = total - resadj;
+            }
+            if(total < 100.00){
+                Double remtime = 100 - total;
                 
                 Double split451 = remtime*45;
                 Double split101 = remtime*10;
-                
+
                 System.out.println(split451);
                 System.out.println(split101);
-               
-                tSupp = tSupp + split451;
-                tsup.setCellValue(tSupp);
-                
-                scholt = scholt + split451;
-                cscholt.setCellValue(scholt);
-                
-                mgmt = mgmt + split101;
-                cmgmt.setCellValue(mgmt);
-                
 
+                tSupp = (tSupp + split451)/100;
+                tsup.setCellValue(tSupp);
+                System.out.println("TEACHING SUPPORT SPLIT: " + tSupp);
+
+                scholt = (scholt + split451)/100;
+                cscholt.setCellValue(scholt);
+                System.out.println("SCHOLARSHIP SPLIT: " + scholt);
+
+                mgmt = (mgmt + split101)/100;
+                cmgmt.setCellValue(mgmt);
+                System.out.println("MANAGEMENT SPLIT: " + mgmt);
+                
             }
-            total = tAC + tSupp + rcT + ukG + EU + ukC + ukI + ktp + other + sfc + sfcd + pgr + internal + suppint + sfc + scholt + scholr + phd + otherserv + othersupp + mgmt;
-            System.out.println("FINAL TOT: " + total);
             
-            Cell ctotal = wb.getSheetAt(1).getRow(i).getCell(24, xc.CREATE_NULL_AS_BLANK);
-            ctotal.setCellValue(total);
+            Double finalTot = tac.getNumericCellValue() + tsup.getNumericCellValue() + rc.getNumericCellValue() + UKg.getNumericCellValue() + eu.getNumericCellValue() + UKc.getNumericCellValue() + UKi.getNumericCellValue() + KTP.getNumericCellValue() + OTHER.getNumericCellValue() + SFC.getNumericCellValue() + SFCR.getNumericCellValue() + PGR.getNumericCellValue() + INT.getNumericCellValue() + SuppInt.getNumericCellValue() + SFCR.getNumericCellValue() + cscholt.getNumericCellValue() + cscholr.getNumericCellValue() + cphd.getNumericCellValue() + cother.getNumericCellValue() + cothersup.getNumericCellValue() + cmgmt.getNumericCellValue();
+            System.out.println("FINAL TOT: " + finalTot);
+            Cell ctot = wb.getSheetAt(1).getRow(i).getCell(24, xc.CREATE_NULL_AS_BLANK);
+            ctot.setCellValue(finalTot);
+            
+            Cell chol = wb.getSheetAt(1).getRow(i).getCell(26, xc.CREATE_NULL_AS_BLANK);
+            
+            Date date = new Date();
+            int check = Null.periodChecker(date);
+            
+            if(check==1){
+                Double hol = Double.parseDouble(o.get("sem1").toString());
+                chol.setCellValue(hol);
+            }
+            else if(check==2){
+                Double hol = Double.parseDouble(o.get("sem2").toString());
+                chol.setCellValue(hol);
+            }
+            else{
+                Double hol = Double.parseDouble(o.get("sem3").toString());
+                chol.setCellValue(hol);
+            }
+           
             
             
             wb.write(fileOut); 

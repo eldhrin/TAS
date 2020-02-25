@@ -7,7 +7,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.io.File;
 import java.io.FileFilter;
@@ -25,7 +24,7 @@ import javax.swing.JOptionPane;
  *
  * @author fl8328
  */
-public class GetHols {
+public class GetHols2 {
     //collection dates
     //1/10 - 31/01
     //1/2-31/5
@@ -38,21 +37,18 @@ public class GetHols {
     //converts blank cell to null
     private static Row.MissingCellPolicy xc;
     
-    public static void getHols() throws IOException, InvalidFormatException, ParseException{
+    public static void getHols2() throws IOException, InvalidFormatException, ParseException{
         //connect to database
         Mongo mongo = new Mongo("localhost", 27017);
         DB db = mongo.getDB("TAS");
         //find collection TAS
         DBCollection collection = db.getCollection("TAS_WL");
-        
+        //user chooses directory containing all users tas excel sheets
         FileFilter filter = new ExcelFileFilter();
         File directory = new File("S:\\Computing\\School_Management\\Management Admin\\HR\\Annual Leave_TOIL\\Staff Annual Leave Records");
         File[] files = directory.listFiles(filter);
         //for every file in the chosen directory
         for(File file : files){
-            
-            
-            //S:\Computing\School_Management\Management Admin\HR\Annual Leave_TOIL\Staff Annual Leave Records
             
             
             //TRY CATCH
@@ -63,43 +59,19 @@ public class GetHols {
                 XSSFWorkbook wb = new XSSFWorkbook(file);
                 BasicDBObject document = new BasicDBObject();
                 //gets name
-                Cell cuid = wb.getSheetAt(0).getRow(4).getCell(1, xc.RETURN_BLANK_AS_NULL);
-                String lastName = new String();
-                lastName = Null.nullString(cuid, lastName) + " test";
-                String split = lastName.toString();
-                String[] splitter = split.split("\\s+");
-                lastName = splitter[1];
-                String firstName = splitter[0].toString();
-                if(firstName.equals("Christopher")){
-                    firstName = "Chris";
-                }
-                else{
-                    firstName = splitter[0].toString();
-                }
-                
-                if(splitter[2].equals("test")){
-                    lastName = lastName;
-                }
-                else{
-                    lastName += " " + splitter[2];
-                    System.out.println(lastName);
-                }
-                System.out.println(cuid.toString());
-                
-                
+                Cell cuid = wb.getSheetAt(0).getRow(5).getCell(1, xc.RETURN_BLANK_AS_NULL);
+                String id = new String();
+                id = Null.nullString(cuid, id);
                 //finds the database object with the name given
                 //ID MUST BE PRESENT IN FIELD OR ELSE IT WON'T WRITE TO DATABASE PROPERLY
-                BasicDBObject query = new BasicDBObject("lastName", lastName);
-                System.out.println(lastName);
+                BasicDBObject query = new BasicDBObject("id", id);
+                System.out.println(id);
                 DBCursor cursor = collection.find(query);
-                
                 
                 //if the object is found then add to it
                 if(cursor.hasNext()){
-                    DBObject o = cursor.next();
-                    System.out.println(lastName);
-                    System.out.println("FOUND " + lastName);
-                    
+                    System.out.println(id);
+                    System.out.println("FOUND ID " + id);
                     //holiday entitlement
                     Cell ent = wb.getSheetAt(1).getRow(6).getCell(1, xc.RETURN_BLANK_AS_NULL);
                     Double cent = 0.0;
@@ -160,42 +132,18 @@ public class GetHols {
                             }
                         }//end if else
                     }//end for
-                    if (lastName.equals("Lothian")){    
-                        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                        sem1 = sem1/24;
-                        sem2 = sem2/24;
-                        sem3 = sem3/24;
-                    }
-                    if(lastName.equals("McDermott")){
-                        if(o.get("firstName").equals(firstName)){
-                            document.put("sem1", sem1);
-                            System.out.println(sem1);
-                            document.put("sem2", sem2);
-                            System.out.println(sem2);
-                            document.put("sem3", sem3);
-                            System.out.println(sem3);
-                            collection.update(cursor.next(), new BasicDBObject("$set",document));                       
-                        }
-                        else{
-                            System.out.println("NOT RIGHT MCDERMOTT");
-                            continue;
-                        }
-                    }
-                    else{
-                        
                         //add to the associated database object
-                    document.put("sem1", sem1);
-                    System.out.println(sem1);
-                    document.put("sem2", sem2);
-                    System.out.println(sem2);
-                    document.put("sem3", sem3);
-                    System.out.println(sem3);
-                    collection.update(cursor.next(), new BasicDBObject("$set",document));
-                    }
+                        document.put("sem1", sem1);
+                        System.out.println(sem1);
+                        document.put("sem2", sem2);
+                        System.out.println(sem2);
+                        document.put("sem3", sem3);
+                        System.out.println(sem3);
+                        collection.update(cursor.next(), new BasicDBObject("$set",document));
                     }//end DB query loop
                     //if database object is not found then skip over the file
                     else {
-                    System.out.println(lastName + " not present");
+                    System.out.println(id + " not present");
                     System.out.println("---------------------------");
                         continue;
                     }
@@ -211,6 +159,7 @@ public class GetHols {
             }
         }//end for file loop
         System.out.println("Gotten holidays and added to db");
+        JOptionPane.showMessageDialog(null, "Done! \n Saved to the database", "Info", JOptionPane.INFORMATION_MESSAGE);
     }//end getHols()
-}
-
+    
+}//end class

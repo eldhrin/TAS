@@ -41,7 +41,7 @@ public class NullifyXLSX {
         
         for(int i=6; i < 34; i++){
             
-            for(int j = 5; j< 18; j++){
+            for(int j = 3; j<25; j++){
                 Cell cell = wb.getSheetAt(1).getRow(i).getCell(j, xc.CREATE_NULL_AS_BLANK);
                 cell.setCellValue(0.0);
             }

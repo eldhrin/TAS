@@ -89,9 +89,7 @@ public class Research {
                     Double lng = 0.0;
                     lng = Null.nullDouble(length, lng);
                     
-                    
-                    Date date = new GregorianCalendar(2019, Calendar.JUNE, 11).getTime();
-                    System.out.println(date);
+                    Date date = new Date();
                     
                     Cell ctime = wb.getSheetAt(0).getRow(i).getCell(5, xc.CREATE_NULL_AS_BLANK);
                     Date time = ctime.getDateCellValue();
@@ -136,23 +134,19 @@ public class Research {
                     String[] projectp = projLead.split("\\s+");
                     ArrayList projectL = new ArrayList<String>();          
                     projLead = projLead.toUpperCase();
-                    int prolength = project.length;
                     System.out.println(Arrays.toString(projectp));
-                    if(projectLead.equals("")){
-                        project[0] = " ";
-                        project[1] = " ";
-                        project[2] = " ";
-                        project[3] = " ";
-                    }
-//                    projectL.add(project[1]);          
-//                    if(prolength <= 2){
-//                        projectL.add("");
-//                    }
-//                    else{
-//                        projectL.add(project[2]);
-//                    }
+                    projectL.addAll(Arrays.asList(projectp));
                     
-                    document.put("projLead", projLead);
+                    if(projectp.length == 2){
+                        projectL.add("");
+                    }
+                    
+                    else if(projectp.length == 1){
+                         projectL.add("");  
+                         projectL.add("");  
+                    }
+                    document.put("projLead", projectL);
+                    
                     
                     Cell cCoinv = wb.getSheetAt(0).getRow(i).getCell(10, xc.CREATE_NULL_AS_BLANK);
                     String coinv = new String();
@@ -163,23 +157,17 @@ public class Research {
                     String[] coin1p = coinv.split("\\s+");
                     ArrayList coINV = new ArrayList<String>();
                     coinID = coinID.toUpperCase();
-                    int colength = coin1.length;
                     System.out.println(Arrays.toString(coin1p));
-                    if(coinv.equals("")){
-                        coin1[0] = " ";
-                        coin1[1] = " ";
-                        coin1[2] = " ";
-                        coin1[3] = " ";
+                    coINV.addAll(Arrays.asList(coin1p)); 
+                    if(coin1p.length == 2){
+                        coINV.add("");
                     }
-//                    coINV.add(coin1[1]);
-//                    if(colength <= 2){
-//                        coINV.add("");
-//                    }
-//                    else{
-//                        coINV.add(coin1[2]);
-//                    }
-//                    
-//                    document.put("co inv 1", coinID);
+                    else if(coin1p.length == 1){
+                        coINV.add("");
+                        coINV.add("");
+                    }
+                    document.put("co inv 1", coINV);
+                    
                     
                     Cell cCoinv2 = wb.getSheetAt(0).getRow(i).getCell(13, xc.CREATE_NULL_AS_BLANK);
                     String coinv2 = new String();
@@ -190,23 +178,17 @@ public class Research {
                     String[] coin2p = coinv2.split("\\s+");
                     ArrayList coINV1 = new ArrayList<String>();
                     coinID2 = coinID2.toUpperCase();
-                    int co2length = coin2.length;
                     System.out.println(Arrays.toString(coin2p));
-                    if(coinID2.equals("")){
-                        coin2[0] = " ";
-                        coin2[1] = " ";
-                        coin2[2] = " ";
-                        coin2[3] = " ";
+                    coINV1.addAll(Arrays.asList(coin2p));
+                    if(coin2p.length == 2){
+                        coINV1.add("");
                     }
+                    else if(coin2p.length == 1){
+                        coINV1.add("");
+                        coINV1.add("");
+                    }
+                    document.put("co inv 2", coINV1);
                     
-//                    coINV1.add(coin2[1]);
-//                    if(co2length <= 2){
-//                        coINV1.add("");
-//                    }
-//                    else{
-//                        coINV1.add(coin2[2]);
-//                    }
-//                    document.put("co inv 2", coinID2);
                    
                     Cell fte = wb.getSheetAt(0).getRow(i).getCell(9, xc.CREATE_NULL_AS_BLANK);
                     Double ft = 0.0;
@@ -283,11 +265,11 @@ public class Research {
                         }
                         
                         fte10 = ft*percent;
-                        array.add(fte10);
+                        array.add(fte10*100);
                         fte11 = fte2*percent;
-                        array.add(fte11);
+                        array.add(fte11*100);
                         fte12 = fte3*percent;
-                        array.add(fte12);
+                        array.add(fte12*100);
                         
                         if(cate.length <= 1){
                             array.add("");
@@ -303,9 +285,9 @@ public class Research {
                     }
                     
                     
-                    document.put("fte", ft);
-                    document.put("fte2", fte2);
-                    document.put("fte3", fte3);
+                    document.put("fte", ft*100);
+                    document.put("fte2", fte2*100);
+                    document.put("fte3", fte3*100);
 
                     document.put("cate", array);
                     

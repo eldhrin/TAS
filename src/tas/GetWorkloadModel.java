@@ -131,7 +131,7 @@ public class GetWorkloadModel {
             
             Cell cRemainingTime =  wb.getSheetAt(0).getRow(i).getCell(22, xc.CREATE_NULL_AS_BLANK);
             Double remainingTime = 0.0;
-            remainingTime = cRemainingTime.getNumericCellValue();
+            remainingTime = cRemainingTime.getNumericCellValue()*100;
             
             document.put("lastName", lastName);
             document.put("firstName",firstName);

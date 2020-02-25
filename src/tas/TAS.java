@@ -38,14 +38,18 @@ public class TAS {
         //CompareResearch.compareResearch();
         //TeachingTemp.teachingTemp();
         
-        //GetPGR.GetPGR();
-        // TEST PutPGR.PutPGR();
-        //NullifyXLSX.nullify();
-        //GetWorkloadModel.GetWorkloadModel();
-        //GrabRemainingTime.GrabRemainingTime(); // WRITES PGR ALLOCATION
-        //WriteReportWorkload.writeReport();
-        //WriteReportResearch.writeReport();
-        Research.research();
+//        GetPGR.GetPGR();
+//        // TEST PutPGR.PutPGR();
+        NullifyXLSX.nullify();
+//        GetWorkloadModel.GetWorkloadModel();
+        GrabRemainingTime.GrabRemainingTime(); // WRITES PGR ALLOCATION
+        WriteReportWorkload.writeReport();
+        WriteReportResearch.writeReport();
+//        Research.research();
+//        
+        CompareResearch.compareResearch();
+
+          //GetHols2.getHols2();
     }
     
 }
